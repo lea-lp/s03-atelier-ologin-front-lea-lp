@@ -1,49 +1,51 @@
 
 var app = {
 
-  form: document.querySelector('#login-form'),
-  inputs: document.getElementsByClassName('field-input'),
+  init: function () {
+    console.log('init()');
 
-  getUserInformation: function (event, inputs, i) {
-    // boucle sur les 2 inputs
-    if (app.inputs[i].value.length < 3) {
-      console.error('nombre de caractères insuffisant')
-      // en quittant le champ, la bordure devient rouge
-      app.inputs[i].setAttribute('style', 'border-color: #ff3860;')
+    var fields = document.querySelectorAll('.field-input');
+   
+    fields.forEach(function(field) {
+      field.addEventListener('blur', app.handleFieldBlur);
+    });
+  
+    var loginForm = document.querySelector('#login-form');
+    loginForm.addEventListener('submit', app.handleSubmit);
+    
+  },
+
+  handleFieldBlur: function (event) {
+    console.log('handleFieldBlur()');
+    
+    var field = event.target;
+    var isFieldLengthValid = app.checkFieldValueLength(field);
+    
+    if (isFieldLengthValid) {
+      field.className = "valid field-input";
     } else {
-      // en quittant le champ, la bordure devient verte
-      app.inputs[i].setAttribute('style', 'border-color: #00d1b2;')
+      field.className = "invalid field-input";
+    }
+  },
+  
+  checkFieldValueLength: function (field) {
+    console.log('checkFieldValueLength()');
+
+    var fieldValue = field.value;
+
+    if (fieldValue.length <= 3) {
+      return false;
+    } else {
+      return true;
     }
   },
 
-  checkSubmit: function (event, i) {
-    // empêche le comportement par default de l'event (submit)
+  handleSubmit: function (event) {
+    console.log('handleSubmit()');
     event.preventDefault();
-    // clean les erreurs précédemment affichées
-    document.getElementById('errors').innerHTML = ""
-    // tableau des erreurs à afficher en fonction de l'input
-    errorMessages = ["Identifiant doit contenir au moins 3 caractères", "Mot de Passe doit contenir au moins 3 caractères"]
-    // création du message d'erreur
-    var newP = document.createElement('p')
-    newP.innerHTML = errorMessages[i]
-    // style du message d'erreur
-    errorStyle = 'color: white; background-color: #ff3860; border-radius: 3px; padding: 1rem; font-size: 0.9em; margin-bottom: 0.9rem'
-    newP.setAttribute('style', errorStyle)
-    // insertion du nouvel élément
-    var error = document.querySelector('#errors');
-    error.appendChild(newP, error);
-  },
 
-  launchApp: function () {
-    console.log('hellooooo')
-    console.log(app.inputs)
-    for (var i = 0; i < 3; i++) {
-      console.log('on est dans la boucle de launch')
-      app.getUserInformation
-      app.checkSubmit
-    }
   }
   
 };
 
-document.addEventListener('DOMLoadedContent', app.launchApp);
+document.addEventListener('click', app.init);
